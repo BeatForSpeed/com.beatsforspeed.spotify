@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.beatforspeed.spotify" version="0.0.1">
+  <name>spotify</name>
+  <js-module name="spotify" src="www/spotify.js">
+    <clobbers target="spotify"/>
+  </js-module>
+  <platform name="ios">
+    <config-file parent="/*" target="config.xml">
+      <feature name="Spotify">
+        <param name="ios-package" value="CDVSpotify"/>
+      </feature>
+    </config-file>
+    
+    <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+    	<array>
+    		<dict>
+    			<key>CFBundleTypeRole</key>
+    			<string>Editor</string>
+    			<key>CFBundleURLName</key>
+    			<string>Spotify Auth</string>
+    			<key>CFBundleURLSchemes</key>
+    			<array>
+    				<string>spotify-ios-sdk-beta</string>
+    			</array>
+    		</dict>
+    	</array>
+    </config-file>
+    
+    
+    <source-file src="src/ios/CDVSpotify.m"/>
+    <header-file src="src/ios/CDVSpotify.h"/>
+
+    <source-file src="src/ios/AppDelegate+spotify.m"/>
+    <header-file src="src/ios/AppDelegate+spotify.h"/>
+    
+    <framework src="src/ios/Spotify.framework" custom="true" />
+    <framework src="AVFoundation.framework"/>    
+  </platform>
+</plugin>
