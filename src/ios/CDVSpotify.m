@@ -4,10 +4,11 @@
 
 static NSString * const kClientId = @"spotify-ios-sdk-beta";
 static NSString * const kCallbackURL = @"spotify-ios-sdk-beta://callback";
-static NSString * const kTokenSwapURL = @"http://localhost:1234/swap";
+static NSString * const kTokenSwapURL = @"http://localhost:3000/users/register";
 
 @interface CDVSpotify ()
 @property (nonatomic, readwrite) SPTTrackPlayer *trackPlayer;
+@property(nonatomic, copy) NSString *callbackId;
 @end
 
 @implementation CDVSpotify
@@ -26,6 +27,7 @@ static NSString * const kTokenSwapURL = @"http://localhost:1234/swap";
     
     testValue = @"Yep";
     
+    self.callbackId = command.callbackId;
     
     [self.commandDelegate runInBackground:^{
         // Some blocking logic...
@@ -38,17 +40,14 @@ static NSString * const kTokenSwapURL = @"http://localhost:1234/swap";
         [[UIApplication sharedApplication] performSelector:@selector(openURL:)
                                                 withObject:loginURL];
         
-        // The sendPluginResult method is thread-safe.
-        CDVPluginResult* pluginResult = nil;
-        
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
 -(BOOL)verifyLogin:(NSURL *)url {
     NSLog(@"VERIFYING");
+    
+    // The sendPluginResult method is thread-safe.
+    CDVPluginResult* pluginResult = nil;
     
     // Ask SPTAuth if the URL given is a Spotify authentication callback
     if ([[SPTAuth defaultInstance] canHandleURL:url withDeclaredRedirectURL:[NSURL URLWithString:kCallbackURL]]) {
@@ -64,11 +63,21 @@ static NSString * const kTokenSwapURL = @"http://localhost:1234/swap";
                  return;
              }
              
+             
              // Call the -playUsingSession: method to play a track
-             [self playUsingSession:session];
+             // [self playUsingSession:session];
          }];
+
+         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                 
+         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+         
         return YES;
     }
+
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Login failed"];
+            
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     
     return NO;
   
