@@ -4,11 +4,13 @@
 
 static NSString * const kClientId = @"spotify-ios-sdk-beta";
 static NSString * const kCallbackURL = @"spotify-ios-sdk-beta://callback";
-static NSString * const kTokenSwapURL = @"http://localhost:3000/users/register";
+//static NSString * const kTokenSwapURL = @"http://localhost:3000/users/register";
+static NSString * const kTokenSwapURL = @"http://localhost:1234/swap";
 
 @interface CDVSpotify ()
 @property (nonatomic, readwrite) SPTTrackPlayer *trackPlayer;
 @property(nonatomic, copy) NSString *callbackId;
+@property(nonatomic, strong) SPTSession *session;
 @end
 
 @implementation CDVSpotify
@@ -63,6 +65,9 @@ static NSString * const kTokenSwapURL = @"http://localhost:3000/users/register";
                  return;
              }
              
+             self.session = session;
+             
+             [self playSong:@"spotify:track:73vllOpuLXzUu1bycglv5L"];
              
              // Call the -playUsingSession: method to play a track
              // [self playUsingSession:session];
@@ -83,7 +88,7 @@ static NSString * const kTokenSwapURL = @"http://localhost:3000/users/register";
   
 }
 
--(void)playUsingSession:(SPTSession *)session {
+-(void)playSong:(NSString *)songID {
     NSLog(@"PLAYING");
     
     // Create a new track player if needed
@@ -99,16 +104,16 @@ static NSString * const kTokenSwapURL = @"http://localhost:3000/users/register";
             return;
         }
         
-        [SPTRequest requestItemAtURI:[NSURL URLWithString:@"spotify:album:4L1HDyfdGIkACuygktO7T7"]
+        [SPTRequest requestItemAtURI:[NSURL URLWithString:songID]
                          withSession:nil
-                            callback:^(NSError *error, SPTAlbum *album) {
+                            callback:^(NSError *error, SPTTrack *track) {
                                 
                                 if (error != nil) {
                                     NSLog(@"*** Album lookup got error %@", error);
                                     return;
                                 }
                                 
-                                [self.trackPlayer playTrackProvider:album];
+                                [self.trackPlayer playTrackProvider:track];
                                 
                             }];
     }];
