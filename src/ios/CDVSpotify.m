@@ -112,8 +112,8 @@ static NSString * const kTokenSwapURL = @"http://localhost:1234/swap";
                                     NSLog(@"*** Album lookup got error %@", error);
                                     return;
                                 }
-                                
-                                [self.trackPlayer playTrackProvider:track];
+                                                                
+                                [self.trackPlayer playTrackProvider:prov];
                                 
                             }];
     }];

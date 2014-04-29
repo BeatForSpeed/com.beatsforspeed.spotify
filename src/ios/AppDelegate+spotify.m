@@ -14,7 +14,6 @@
 - (id) getCommandInstance:(NSString*)className
 {
     
-    
 	return [self.viewController getCommandInstance:className];
 }
 
